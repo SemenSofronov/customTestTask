@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://editorCaption"
+        class="com.company.testtask.web.organization.OrganizationEdit"
+        datasource="organizationDs"
+        focusComponent="fieldGroup"
+        messagesPack="com.company.testtask.web.organization">
+    <dsContext>
+        <datasource id="organizationDs"
+                    class="com.company.testtask.entity.Organization"
+                    view="_local"/>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="windowActions"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="organizationDs">
+            <column width="250px">
+                <field property="name"/>
+                <field property="taxNumber"/>
+                <field property="registrationNumber"/>
+                <field property="escapeVat"/>
+            </column>
+        </fieldGroup>
+        <frame id="windowActions"
+               screen="editWindowActions"/>
+    </layout>
+</window>

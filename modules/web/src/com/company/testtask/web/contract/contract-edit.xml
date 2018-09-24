@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://editorCaption"
+        class="com.company.testtask.web.contract.ContractEdit"
+        datasource="contractDs"
+        focusComponent="leftFieldGroup"
+        messagesPack="com.company.testtask.web.contract">
+    <dsContext>
+        <datasource id="contractDs"
+                    class="com.company.testtask.entity.Contract"
+                    view="contract-view-edit">
+            <collectionDatasource id="stageDs"
+                                  property="stages"/>
+        </datasource>
+        <collectionDatasource id="organizationsDs"
+                              class="com.company.testtask.entity.Organization"
+                              view="_local">
+            <query>
+                <![CDATA[select e from testtask$Organization e]]>
+            </query>
+        </collectionDatasource>
+        <collectionDatasource id="procAttachmentsDs"
+                              class="com.haulmont.bpm.entity.ProcAttachment"
+                              view="procAttachment-browse">
+            <query>
+                <![CDATA[select a from bpm$ProcAttachment a
+                            where a.procInstance.entity.entityId = :ds$contractDs
+                            order by a.createTs]]>
+            </query>
+        </collectionDatasource>
+        <collectionDatasource id="invoicesDs"
+                              class="com.company.testtask.entity.Invoice"
+                              view="_local">
+            <query>
+                <![CDATA[select e from testtask$Invoice e where e.stage.contract.id = :ds$contractDs]]>
+            </query>
+        </collectionDatasource>
+        <collectionDatasource id="certificateDs"
+                              class="com.company.testtask.entity.ServiceCompletionCertificate"
+                              view="_local">
+            <query>
+                <![CDATA[select e from testtask$ServiceCompletionCertificate e where e.stage.contract.id = :ds$contractDs]]>
+            </query>
+        </collectionDatasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="split"
+            spacing="true">
+        <groupBox id="procActionsBox"
+                  caption="Process"
+                  orientation="vertical"
+                  width="AUTO"
+                  spacing="true">
+            <frame id="procActionsFrame"
+                   screen="procActionsFrame"/>
+        </groupBox>
+        <groupBox id="groupBox"
+                  spacing="true">
+            <grid spacing="true"
+                  width="50%">
+                <columns count="2"/>
+                <rows>
+                    <row>
+                        <fieldGroup id="leftFieldGroup"
+                                    datasource="contractDs">
+                            <column width="250px">
+                                <field optionsDatasource="organizationsDs"
+                                       property="customer"/>
+                                <field optionsDatasource="organizationsDs"
+                                       property="performer"/>
+                                <field property="number"/>
+                                <field property="signedDate"/>
+                                <field property="type"/>
+                                <field editable="false"
+                                       property="status"/>
+                            </column>
+                        </fieldGroup>
+                        <fieldGroup id="rightFieldGroup"
+                                    datasource="contractDs">
+                            <column width="250px">
+                                <field property="dateFrom"/>
+                                <field property="dateTo"/>
+                                <field property="amount"/>
+                                <field property="vat"/>
+                                <field property="totalAmount"/>
+                                <field property="customerSigner"/>
+                                <field property="performerSigner"/>
+                            </column>
+                        </fieldGroup>
+                    </row>
+                </rows>
+            </grid>
+        </groupBox>
+        <split id="split"
+               orientation="horizontal"
+               width="100%">
+            <vbox id="stagesBox"
+                  expand="stageTable"
+                  height="100%"
+                  margin="false,true,false,false"
+                  spacing="true">
+                <label stylename="h2"
+                       value="Stages"/>
+                <buttonsPanel>
+                    <button id="stageTableCreateBtn"
+                            action="stageTable.create"/>
+                    <button id="stageTableEditBtn"
+                            action="stageTable.edit"/>
+                    <button id="stageTableRemoveBtn"
+                            action="stageTable.remove"/>
+                    <button id="buttonCertificate"
+                            action="stageTable.createCertificate"
+                            caption="Create Certificate"/>
+                    <button id="buttonInvoice"
+                            action="stageTable.createInvoice"
+                            caption="Create Invoice"/>
+                </buttonsPanel>
+                <table id="stageTable"
+                       width="100%">
+                    <actions>
+                        <action id="create"/>
+                        <action id="edit"/>
+                        <action id="remove"/>
+                        <action id="createInvoice"/>
+                        <action id="createCertificate"/>
+                    </actions>
+                    <columns>
+                        <column id="name"/>
+                        <column id="dateFrom"/>
+                        <column id="dateTo"/>
+                        <column id="amount"/>
+                        <column id="vat"/>
+                        <column id="totalAmount"/>
+                        <column id="description"/>
+                    </columns>
+                    <rows datasource="stageDs"/>
+                </table>
+            </vbox>
+            <vbox id="tabsBox"
+                  height="100%"
+                  margin="false,false,false,true"
+                  spacing="true">
+                <tabSheet id="tabSheet"
+                          height="100%">
+                    <tab id="tab"
+                         caption="Invoices"
+                         margin="true,false,false,false"
+                         spacing="true">
+                        <groupBox id="invoicesBox"
+                                  expand="invoicesTable"
+                                  height="100%"
+                                  spacing="true">
+                            <buttonsPanel>
+                                <button id="invoicesTableEditBtn"
+                                        action="invoicesTable.edit"/>
+                                <button id="invoicesTableRemoveBtn"
+                                        action="invoicesTable.remove"/>
+                                <button id="reportInvoiceButton"
+                                        icon="PRINT"/>
+                            </buttonsPanel>
+                            <table id="invoicesTable"
+                                   width="100%">
+                                <actions>
+                                    <action id="edit"/>
+                                    <action id="remove"/>
+                                </actions>
+                                <columns>
+                                    <column id="number"/>
+                                    <column id="date"/>
+                                    <column id="amount"/>
+                                    <column id="vat"/>
+                                    <column id="totalAmount"/>
+                                    <column id="description"/>
+                                </columns>
+                                <rows datasource="invoicesDs"/>
+                            </table>
+                        </groupBox>
+                    </tab>
+                    <tab id="tab_1"
+                         caption="Certificates"
+                         margin="true,false,false,false"
+                         spacing="true">
+                        <groupBox id="certificatesBox"
+                                  expand="certificatesTable"
+                                  height="100%"
+                                  spacing="true">
+                            <buttonsPanel>
+                                <button id="certificatesTableEditBtn"
+                                        action="certificatesTable.edit"/>
+                                <button id="certificatesTableRemoveBtn"
+                                        action="certificatesTable.remove"/>
+                                <button id="reportCertificateButton"
+                                        icon="PRINT"/>
+                            </buttonsPanel>
+                            <table id="certificatesTable"
+                                   width="100%">
+                                <actions>
+                                    <action id="edit"/>
+                                    <action id="remove"/>
+                                </actions>
+                                <columns>
+                                    <column id="number"/>
+                                    <column id="date"/>
+                                    <column id="amount"/>
+                                    <column id="vat"/>
+                                    <column id="totalAmount"/>
+                                    <column id="description"/>
+                                </columns>
+                                <rows datasource="certificateDs"/>
+                            </table>
+                        </groupBox>
+                    </tab>
+                </tabSheet>
+            </vbox>
+        </split>
+        <frame id="windowActions"
+               screen="editWindowActions"/>
+    </layout>
+</window>

@@ -1,0 +1,1 @@
+alter table TESTTASK_SERVICE_COMPLETION_CERTIFICATE add column STAGE_ID varchar(36) ;

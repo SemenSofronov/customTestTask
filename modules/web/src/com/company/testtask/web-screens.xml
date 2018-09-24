@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<screen-config xmlns="http://schemas.haulmont.com/cuba/screens.xsd">
+    <screen id="testtask$Organization.browse"
+            template="com/company/testtask/web/organization/organization-browse.xml"/>
+    <screen id="testtask$Organization.edit"
+            template="com/company/testtask/web/organization/organization-edit.xml"/>
+    <screen id="testtask$Stage.browse"
+            template="com/company/testtask/web/stage/stage-browse.xml"/>
+    <screen id="testtask$ServiceCompletionCertificate.browse"
+            template="com/company/testtask/web/servicecompletioncertificate/service-completion-certificate-browse.xml"/>
+    <screen id="testtask$Invoice.browse"
+            template="com/company/testtask/web/invoice/invoice-browse.xml"/>
+    <screen id="testtask$Contract.browse"
+            template="com/company/testtask/web/contract/contract-browse.xml"/>
+    <screen id="testtask$Contract.edit"
+            template="com/company/testtask/web/contract/contract-edit.xml"/>
+    <screen id="testtask$Stage.edit"
+            template="com/company/testtask/web/stage/stage-edit.xml"/>
+    <screen id="testtask$Invoice.edit"
+            template="com/company/testtask/web/invoice/invoice-edit.xml"/>
+    <screen id="testtask$ServiceCompletionCertificate.edit"
+            template="com/company/testtask/web/servicecompletioncertificate/service-completion-certificate-edit.xml"/>
+</screen-config>

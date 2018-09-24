@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://editorCaption"
+        class="com.company.testtask.web.servicecompletioncertificate.ServiceCompletionCertificateEdit"
+        datasource="serviceCompletionCertificateDs"
+        focusComponent="fieldGroup"
+        messagesPack="com.company.testtask.web.servicecompletioncertificate">
+    <dsContext>
+        <datasource id="serviceCompletionCertificateDs"
+                    class="com.company.testtask.entity.ServiceCompletionCertificate"
+                    view="_local"/>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="windowActions"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="serviceCompletionCertificateDs">
+            <column width="250px">
+                <field editable="false"
+                       property="number"/>
+                <field editable="false"
+                       property="date"/>
+                <field editable="false"
+                       property="amount"/>
+                <field editable="false"
+                       property="vat"/>
+                <field editable="false"
+                       property="totalAmount"/>
+                <field property="description"/>
+            </column>
+        </fieldGroup>
+        <frame id="windowActions"
+               screen="editWindowActions"/>
+    </layout>
+</window>

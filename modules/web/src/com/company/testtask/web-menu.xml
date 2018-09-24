@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://schemas.haulmont.com/cuba/menu.xsd">
+    <menu id="application-testtask"
+          insertBefore="administration">
+        <item screen="testtask$Organization.browse"/>
+        <item screen="testtask$ServiceCompletionCertificate.browse"/>
+        <item screen="testtask$Invoice.browse"/>
+        <item screen="testtask$Contract.browse"/>
+    </menu>
+</menu-config>

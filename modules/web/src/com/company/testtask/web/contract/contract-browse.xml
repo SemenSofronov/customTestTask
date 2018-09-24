@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://browseCaption"
+        class="com.company.testtask.web.contract.ContractBrowse"
+        focusComponent="contractsTable"
+        lookupComponent="contractsTable"
+        messagesPack="com.company.testtask.web.contract">
+    <dsContext>
+        <groupDatasource id="contractsDs"
+                         class="com.company.testtask.entity.Contract"
+                         view="contract-view-browse">
+            <query>
+                <![CDATA[select e from testtask$Contract e]]>
+            </query>
+        </groupDatasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="contractsTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="contractsTable"
+                datasource="contractsDs">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="contractsTable"
+                    width="100%">
+            <actions>
+                <action id="create"/>
+                <action id="edit"/>
+                <action id="remove"/>
+            </actions>
+            <columns>
+                <column id="customer"
+                        caption="customer"/>
+                <column id="performer"/>
+                <column id="number"/>
+                <column id="signedDate"/>
+                <column id="type"/>
+                <column id="dateFrom"/>
+                <column id="dateTo"/>
+                <column id="amount"/>
+                <column id="vat"/>
+                <column id="totalAmount"/>
+                <column id="customerSigner"/>
+                <column id="performerSigner"/>
+                <column id="status"/>
+            </columns>
+            <rows datasource="contractsDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn"
+                        action="contractsTable.create"/>
+                <button id="editBtn"
+                        action="contractsTable.edit"/>
+                <button id="removeBtn"
+                        action="contractsTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+    </layout>
+</window>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
+    <view class="com.company.testtask.entity.Contract"
+          extends="_local"
+          name="contract-view-edit">
+        <property name="performer"
+                  view="_minimal">
+            <property name="escapeVat"/>
+        </property>
+        <property name="customer"
+                  view="_minimal"/>
+        <property name="stages"
+                  view="_minimal">
+            <property name="description"/>
+            <property name="serviceCompletionCertificate"
+                      view="_minimal"/>
+            <property name="invoice"
+                      view="_minimal"/>
+            <property name="dateFrom"/>
+            <property name="dateTo"/>
+            <property name="amount"/>
+            <property name="vat"/>
+            <property name="totalAmount"/>
+            <property name="contract"
+                      view="_minimal"/>
+        </property>
+    </view>
+    <view class="com.company.testtask.entity.Contract"
+          extends="_local"
+          name="contract-view-browse">
+        <property name="customer"
+                  view="_minimal"/>
+        <property name="performer"
+                  view="_minimal"/>
+    </view>
+    <view class="com.company.testtask.entity.Stage"
+          extends="_local"
+          name="stage-view">
+        <property name="contract"
+                  view="_minimal">
+            <property name="customer"
+                      view="_minimal"/>
+            <property name="performer"
+                      view="_minimal"/>
+        </property>
+        <property name="invoice"
+                  view="_minimal"/>
+        <property name="serviceCompletionCertificate"
+                  view="_minimal"/>
+    </view>
+    <view class="com.company.testtask.entity.Invoice"
+          extends="_local"
+          name="invoice-view">
+        <property name="stage"
+                  view="_minimal">
+            <property name="contract"
+                      view="_minimal">
+                <property name="customer"
+                          view="_minimal">
+                    <property name="taxNumber"/>
+                    <property name="registrationNumber"/>
+                </property>
+                <property name="performer"
+                          view="_minimal">
+                    <property name="taxNumber"/>
+                    <property name="registrationNumber"/>
+                </property>
+            </property>
+        </property>
+    </view>
+    <view class="com.company.testtask.entity.ServiceCompletionCertificate"
+          extends="_local"
+          name="serviceCompletionCertificate-view">
+        <property name="stage"
+                  view="_minimal">
+            <property name="dateFrom"/>
+            <property name="dateTo"/>
+            <property name="contract"
+                      view="_minimal">
+                <property name="customer"
+                          view="_minimal"/>
+                <property name="performer"
+                          view="_minimal"/>
+                <property name="customerSigner"/>
+                <property name="performerSigner"/>
+            </property>
+        </property>
+    </view>
+</views>
