@@ -5,7 +5,6 @@ import com.company.testtask.entity.Contract;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
-import com.haulmont.cuba.core.global.Metadata;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -18,18 +17,18 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 
-@Component("testtask_ContractHelper")
-public class ContractHelper {
+@Component("testtask_ContractReportHelper")
+public class ContractReportHelper {
 
     @Inject
     private Persistence persistence;
 
     public String vatFormat(Object vat) {
-        String vatFormat = vat.toString();
-        if (vatFormat.equals("0%")) {
+        BigDecimal vatFormat = (BigDecimal) vat;
+        if (vatFormat.intValue() == 0) {
             return "не облагается в виду применения Исполнителем упрощенной системы налогообложения";
         } else {
-            return vatFormat;
+            return vatFormat.toString();
         }
     }
 

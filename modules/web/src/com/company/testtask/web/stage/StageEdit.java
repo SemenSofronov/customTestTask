@@ -1,10 +1,12 @@
 package com.company.testtask.web.stage;
 
+import com.company.testtask.AmountCalculator;
 import com.company.testtask.entity.Contract;
 import com.company.testtask.entity.Stage;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.cuba.gui.components.TextField;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import java.math.BigDecimal;
 
@@ -15,6 +17,9 @@ public class StageEdit extends AbstractEditor<Stage> {
 
     @Named("fieldGroup.vat")
     protected TextField vatField;
+
+    @Inject
+    protected AmountCalculator amountCalculator;
 
     @Override
     protected void initNewItem(Stage item) {
@@ -35,16 +40,15 @@ public class StageEdit extends AbstractEditor<Stage> {
             if (amount != null) {
 
                 Stage stage = getItem();
-                String vat = stage.getVat();
-                vat = vat.replace("%", "");
+                BigDecimal vat = stage.getVat();
 
-                BigDecimal totalAmount = amount.multiply(new BigDecimal(1 + Double.valueOf(vat) / 100));
+                BigDecimal totalAmount = amountCalculator.calculateTotalAmount(amount, vat);
                 stage.setTotalAmount(totalAmount);
             }
         });
 
         vatField.addValueChangeListener(e -> {
-            String vat = (String) e.getValue();
+            BigDecimal vat = (BigDecimal) e.getValue();
 
             if (vat != null) {
 
@@ -53,9 +57,7 @@ public class StageEdit extends AbstractEditor<Stage> {
 
                 if (amount != null) {
 
-                    vat = vat.replace("%", "");
-
-                    BigDecimal totalAmount = amount.multiply(new BigDecimal(1 + Double.valueOf(vat) / 100));
+                    BigDecimal totalAmount = amountCalculator.calculateTotalAmount(amount, vat);
                     stage.setTotalAmount(totalAmount);
                 }
             }

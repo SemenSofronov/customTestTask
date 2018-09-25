@@ -1,30 +1,21 @@
 package com.company.testtask.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import com.haulmont.cuba.core.entity.StandardEntity;
+import com.haulmont.chile.core.annotations.Composition;
 import com.haulmont.chile.core.annotations.NamePattern;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import com.haulmont.cuba.core.entity.annotation.Listeners;
 import com.haulmont.cuba.core.entity.annotation.Lookup;
 import com.haulmont.cuba.core.entity.annotation.LookupType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import org.hibernate.validator.constraints.Length;
-import java.util.List;
-import javax.persistence.OneToMany;
-import com.haulmont.cuba.core.entity.annotation.Listeners;
-import com.haulmont.chile.core.annotations.Composition;
 import com.haulmont.cuba.core.entity.annotation.OnDelete;
 import com.haulmont.cuba.core.global.DeletePolicy;
-import com.haulmont.cuba.core.entity.annotation.OnDeleteInverse;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+@Listeners("testtask_ContractEntityListener")
 @NamePattern("%s|number")
 @Table(name = "TESTTASK_CONTRACT")
 @Entity(name = "testtask$Contract")
@@ -65,7 +56,7 @@ public class Contract extends StandardEntity {
     protected BigDecimal amount;
 
     @Column(name = "VAT")
-    protected String vat;
+    protected BigDecimal vat;
 
     @Column(name = "TOTAL_AMOUNT")
     protected BigDecimal totalAmount;
@@ -84,6 +75,14 @@ public class Contract extends StandardEntity {
     @Column(name = "STATUS")
     protected String status;
 
+    public BigDecimal getVat() {
+        return vat;
+    }
+
+    public void setVat(BigDecimal vat) {
+        this.vat = vat;
+    }
+
     public void setStatus(String status) {
         this.status = status;
     }
@@ -91,7 +90,6 @@ public class Contract extends StandardEntity {
     public String getStatus() {
         return status;
     }
-
 
     public void setStages(List<Stage> stages) {
         this.stages = stages;
@@ -101,7 +99,6 @@ public class Contract extends StandardEntity {
         return stages;
     }
 
-
     public Organization getCustomer() {
         return customer;
     }
@@ -110,17 +107,9 @@ public class Contract extends StandardEntity {
         this.customer = customer;
     }
 
-
-
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
-
-
-    public void setVat(String vat) {
-        this.vat = vat;
-    }
-
 
     public BigDecimal getTotalAmount() {
         return totalAmount;
@@ -130,7 +119,6 @@ public class Contract extends StandardEntity {
         this.totalAmount = totalAmount;
     }
 
-
     public void setPerformer(Organization performer) {
         this.performer = performer;
     }
@@ -138,7 +126,6 @@ public class Contract extends StandardEntity {
     public Organization getPerformer() {
         return performer;
     }
-
 
     public void setNumber(String number) {
         this.number = number;
@@ -184,12 +171,6 @@ public class Contract extends StandardEntity {
         return amount;
     }
 
-    public String getVat() {
-        return vat;
-    }
-
-
-
     public void setCustomerSigner(String customerSigner) {
         this.customerSigner = customerSigner;
     }
@@ -205,6 +186,5 @@ public class Contract extends StandardEntity {
     public String getPerformerSigner() {
         return performerSigner;
     }
-
 
 }

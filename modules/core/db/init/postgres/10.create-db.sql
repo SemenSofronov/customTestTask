@@ -1,6 +1,6 @@
 -- begin TESTTASK_ORGANIZATION
 create table TESTTASK_ORGANIZATION (
-    ID varchar(36) not null,
+    ID uuid,
     VERSION integer not null,
     CREATE_TS timestamp,
     CREATED_BY varchar(50),
@@ -19,7 +19,7 @@ create table TESTTASK_ORGANIZATION (
 -- end TESTTASK_ORGANIZATION
 -- begin TESTTASK_CONTRACT
 create table TESTTASK_CONTRACT (
-    ID varchar(36) not null,
+    ID uuid,
     VERSION integer not null,
     CREATE_TS timestamp,
     CREATED_BY varchar(50),
@@ -28,8 +28,8 @@ create table TESTTASK_CONTRACT (
     DELETE_TS timestamp,
     DELETED_BY varchar(50),
     --
-    CUSTOMER_ID varchar(36) not null,
-    PERFORMER_ID varchar(36) not null,
+    CUSTOMER_ID uuid not null,
+    PERFORMER_ID uuid not null,
     NUMBER_ varchar(255),
     SIGNED_DATE date,
     TYPE_ integer,
@@ -47,7 +47,7 @@ create table TESTTASK_CONTRACT (
 -- end TESTTASK_CONTRACT
 -- begin TESTTASK_STAGE
 create table TESTTASK_STAGE (
-    ID varchar(36) not null,
+    ID uuid,
     VERSION integer not null,
     CREATE_TS timestamp,
     CREATED_BY varchar(50),
@@ -63,14 +63,14 @@ create table TESTTASK_STAGE (
     VAT decimal(19, 2),
     TOTAL_AMOUNT decimal(19, 2),
     DESCRIPTION varchar(255),
-    CONTRACT_ID varchar(36),
+    CONTRACT_ID uuid,
     --
     primary key (ID)
 )^
 -- end TESTTASK_STAGE
 -- begin TESTTASK_SERVICE_COMPLETION_CERTIFICATE
 create table TESTTASK_SERVICE_COMPLETION_CERTIFICATE (
-    ID varchar(36) not null,
+    ID uuid,
     VERSION integer not null,
     CREATE_TS timestamp,
     CREATED_BY varchar(50),
@@ -85,14 +85,14 @@ create table TESTTASK_SERVICE_COMPLETION_CERTIFICATE (
     VAT decimal(19, 2),
     TOTAL_AMOUNT decimal(19, 2),
     DESCRIPTION varchar(255),
-    STAGE_ID varchar(36),
+    STAGE_ID uuid,
     --
     primary key (ID)
 )^
 -- end TESTTASK_SERVICE_COMPLETION_CERTIFICATE
 -- begin TESTTASK_INVOICE
 create table TESTTASK_INVOICE (
-    ID varchar(36) not null,
+    ID uuid,
     VERSION integer not null,
     CREATE_TS timestamp,
     CREATED_BY varchar(50),
@@ -107,7 +107,7 @@ create table TESTTASK_INVOICE (
     VAT decimal(19, 2),
     TOTAL_AMOUNT decimal(19, 2),
     DESCRIPTION varchar(255),
-    STAGE_ID varchar(36),
+    STAGE_ID uuid,
     --
     primary key (ID)
 )^

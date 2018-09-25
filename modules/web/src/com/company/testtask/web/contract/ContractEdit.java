@@ -1,14 +1,15 @@
 package com.company.testtask.web.contract;
 
+import com.company.testtask.AmountCalculator;
+import com.company.testtask.configuration.ContractConfig;
 import com.company.testtask.entity.*;
 import com.haulmont.bpm.gui.procactions.ProcActionsFrame;
+import com.haulmont.cuba.core.global.Configuration;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.TimeSource;
-import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
-import com.haulmont.cuba.gui.components.actions.EditAction;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
@@ -17,9 +18,7 @@ import com.haulmont.reports.gui.actions.TablePrintFormAction;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 public class ContractEdit extends AbstractEditor<Contract> {
@@ -82,12 +81,17 @@ public class ContractEdit extends AbstractEditor<Contract> {
     @Inject
     protected Button reportCertificateButton;
 
+    @Inject
+    protected Configuration configuration;
+
+    @Inject
+    protected AmountCalculator amountCalculator;
+
     @Override
     protected void initNewItem(Contract item) {
         super.initNewItem(item);
 
-        String vat = AppContext.getProperty("app.vatValue");
-        item.setVat(vat);
+        setVatFromConfig(item);
 
         item.setStatus("New");
     }
@@ -106,10 +110,9 @@ public class ContractEdit extends AbstractEditor<Contract> {
 
         Action createInvoice = new ItemTrackingAction(stageTable, "createInvoice")
                 .withHandler(e -> {
-                    Set<Stage> selected = stageTable.getSelected();
+                    Stage stage = stageTable.getSingleSelected();
 
-                    if (selected.size() == 1) {
-                        Stage stage = (Stage) selected.toArray()[0];
+                    if (stage != null) {
 
                         Invoice invoice = metadata.create(Invoice.class);
                         invoice.setAmount(stage.getAmount());
@@ -132,13 +135,12 @@ public class ContractEdit extends AbstractEditor<Contract> {
                 });
 
         ((BaseAction) createInvoice).addEnabledRule(() -> {
-            Set<Stage> selected = stageTable.getSelected();
+            Stage stage = stageTable.getSingleSelected();
 
-            if (selected.size() == 1) {
-                Stage stage = (Stage) selected.toArray()[0];
-
+            if (stage != null) {
                 return stage.getInvoice() == null;
             }
+
             return false;
         });
 
@@ -146,11 +148,9 @@ public class ContractEdit extends AbstractEditor<Contract> {
 
         Action createCertificate = new ItemTrackingAction(stageTable, "createCertificate")
                 .withHandler(e -> {
-                    Set<Stage> selected = stageTable.getSelected();
+                    Stage stage = stageTable.getSingleSelected();
 
-                    if (selected.size() == 1) {
-                        Stage stage = (Stage) selected.toArray()[0];
-
+                    if (stage != null) {
 
                         ServiceCompletionCertificate certificate = metadata.create(ServiceCompletionCertificate.class);
                         certificate.setAmount(stage.getAmount());
@@ -172,13 +172,12 @@ public class ContractEdit extends AbstractEditor<Contract> {
                 });
 
         ((BaseAction) createCertificate).addEnabledRule(() -> {
-            Set<Stage> selected = stageTable.getSelected();
+            Stage stage = stageTable.getSingleSelected();
 
-            if (selected.size() == 1) {
-                Stage stage = (Stage) selected.toArray()[0];
-
+            if (stage != null) {
                 return stage.getServiceCompletionCertificate() == null;
             }
+
             return false;
         });
 
@@ -193,9 +192,9 @@ public class ContractEdit extends AbstractEditor<Contract> {
             Contract contract = getItem();
 
             if (isEscapingVat(contract)) {
-                contract.setVat("0%");
+                contract.setVat(new BigDecimal(0));
             } else {
-                contract.setVat(AppContext.getProperty("app.vatValue"));
+                setVatFromConfig(contract);
             }
         };
 
@@ -209,16 +208,15 @@ public class ContractEdit extends AbstractEditor<Contract> {
             if (amount != null) {
 
                 Contract contract = getItem();
-                String vat = contract.getVat();
-                vat = vat.replace("%", "");
+                BigDecimal vat = contract.getVat();
 
-                BigDecimal totalAmount = amount.multiply(new BigDecimal(1 + Double.valueOf(vat) / 100));
+                BigDecimal totalAmount = amountCalculator.calculateTotalAmount(amount, vat);
                 contract.setTotalAmount(totalAmount);
             }
         });
 
         vatField.addValueChangeListener(e -> {
-            String vat = (String) e.getValue();
+            BigDecimal vat = (BigDecimal) e.getValue();
 
             if (vat != null) {
 
@@ -227,9 +225,7 @@ public class ContractEdit extends AbstractEditor<Contract> {
 
                 if (amount != null) {
 
-                    vat = vat.replace("%", "");
-
-                    BigDecimal totalAmount = amount.multiply(new BigDecimal(1 + Double.valueOf(vat) / 100));
+                    BigDecimal totalAmount = amountCalculator.calculateTotalAmount(amount, vat);
                     contract.setTotalAmount(totalAmount);
                 }
             }
@@ -243,28 +239,9 @@ public class ContractEdit extends AbstractEditor<Contract> {
         return customer != null && customer.getEscapeVat() || performer != null && performer.getEscapeVat();
     }
 
-    @Override
-    protected boolean postCommit(boolean committed, boolean close) {
-        if (committed) {
-            Contract contract = getItem();
-
-            List<Stage> stages = contract.getStages();
-            if (stages.isEmpty()) {
-
-                Stage stage = metadata.create(Stage.class);
-                stage.setName("Common");
-                stage.setAmount(contract.getAmount());
-                stage.setDateFrom(contract.getDateFrom());
-                stage.setDateTo(contract.getDateTo());
-                stage.setVat(contract.getVat());
-                stage.setTotalAmount(contract.getTotalAmount());
-                stage.setContract(contract);
-
-                dataManager.commit(stage);
-            }
-        }
-
-        return super.postCommit(committed, close);
+    protected void setVatFromConfig(Contract item) {
+        BigDecimal vat = configuration.getConfig(ContractConfig.class).getVat();
+        item.setVat(vat);
     }
 
     @Override

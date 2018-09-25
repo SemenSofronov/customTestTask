@@ -50,8 +50,8 @@
         <groupBox id="procActionsBox"
                   caption="Process"
                   orientation="vertical"
-                  width="AUTO"
-                  spacing="true">
+                  spacing="true"
+                  width="AUTO">
             <frame id="procActionsFrame"
                    screen="procActionsFrame"/>
         </groupBox>
@@ -82,8 +82,10 @@
                                 <field property="dateFrom"/>
                                 <field property="dateTo"/>
                                 <field property="amount"/>
-                                <field property="vat"/>
-                                <field property="totalAmount"/>
+                                <field editable="false"
+                                       property="vat"/>
+                                <field editable="false"
+                                       property="totalAmount"/>
                                 <field property="customerSigner"/>
                                 <field property="performerSigner"/>
                             </column>

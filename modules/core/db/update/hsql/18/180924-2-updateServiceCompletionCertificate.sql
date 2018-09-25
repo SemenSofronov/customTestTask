@@ -1,0 +1,2 @@
+alter table TESTTASK_SERVICE_COMPLETION_CERTIFICATE alter column VAT rename to VAT__U93357 ^
+alter table TESTTASK_SERVICE_COMPLETION_CERTIFICATE add column VAT decimal(19, 2) ;

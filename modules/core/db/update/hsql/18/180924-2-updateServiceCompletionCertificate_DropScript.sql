@@ -1,0 +1,1 @@
+alter table TESTTASK_SERVICE_COMPLETION_CERTIFICATE drop column VAT__U93357 cascade ;

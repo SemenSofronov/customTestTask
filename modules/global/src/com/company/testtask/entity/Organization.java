@@ -39,7 +39,6 @@ public class Organization extends StandardEntity {
         return escapeVat;
     }
 
-
     public void setContract(List<Contract> contract) {
         this.contract = contract;
     }
@@ -47,7 +46,6 @@ public class Organization extends StandardEntity {
     public List<Contract> getContract() {
         return contract;
     }
-
 
     public void setName(String name) {
         this.name = name;
@@ -72,6 +70,5 @@ public class Organization extends StandardEntity {
     public String getRegistrationNumber() {
         return registrationNumber;
     }
-
 
 }

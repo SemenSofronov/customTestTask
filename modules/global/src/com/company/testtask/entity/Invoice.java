@@ -30,7 +30,7 @@ public class Invoice extends StandardEntity {
     protected BigDecimal amount;
 
     @Column(name = "VAT")
-    protected String vat;
+    protected BigDecimal vat;
 
     @Column(name = "TOTAL_AMOUNT")
     protected BigDecimal totalAmount;
@@ -42,6 +42,23 @@ public class Invoice extends StandardEntity {
     @OneToOne(fetch = FetchType.LAZY)
     protected Stage stage;
 
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+
+    public BigDecimal getVat() {
+        return vat;
+    }
+
+    public void setVat(BigDecimal vat) {
+        this.vat = vat;
+    }
+
     public void setStage(Stage stage) {
         this.stage = stage;
     }
@@ -50,14 +67,6 @@ public class Invoice extends StandardEntity {
         return stage;
     }
 
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getNumber() {
-        return number;
-    }
 
     public void setDate(Date date) {
         this.date = date;
@@ -75,14 +84,6 @@ public class Invoice extends StandardEntity {
         return amount;
     }
 
-    public void setVat(String vat) {
-        this.vat = vat;
-    }
-
-    public String getVat() {
-        return vat;
-    }
-
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
@@ -98,6 +99,5 @@ public class Invoice extends StandardEntity {
     public String getDescription() {
         return description;
     }
-
 
 }
