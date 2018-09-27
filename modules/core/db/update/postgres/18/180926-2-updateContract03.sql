@@ -1,0 +1,2 @@
+alter table TESTTASK_CONTRACT add constraint FK_TESTTASK_CONTRACT_ON_FILE foreign key (FILE_ID) references SYS_FILE(ID);
+create index IDX_TESTTASK_CONTRACT_ON_FILE on TESTTASK_CONTRACT (FILE_ID);

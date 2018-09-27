@@ -6,5 +6,6 @@
         <item screen="testtask$ServiceCompletionCertificate.browse"/>
         <item screen="testtask$Invoice.browse"/>
         <item screen="testtask$Contract.browse"/>
+        <item screen="testtask$Status.browse"/>
     </menu>
 </menu-config>

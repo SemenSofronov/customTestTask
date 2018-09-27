@@ -1,0 +1,1 @@
+alter table TESTTASK_SERVICE_COMPLETION_CERTIFICATE add column FILE_ID uuid ;

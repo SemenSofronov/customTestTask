@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fts-config xmlns="http://schemas.haulmont.com/cuba/fts.xsd">
+    <entities>
+        <entity class="com.company.testtask.entity.Organization">
+            <include re=".*"/>
+        </entity>
+        <entity class="com.company.testtask.entity.Contract">
+            <include re=".*"/>
+        </entity>
+        <entity class="com.company.testtask.entity.Stage">
+            <include re=".*"/>
+        </entity>
+        <entity class="com.company.testtask.entity.ServiceCompletionCertificate">
+            <include re=".*"/>
+        </entity>
+        <entity class="com.company.testtask.entity.Invoice">
+            <include re=".*"/>
+        </entity>
+        <entity class="com.company.testtask.entity.Status">
+            <include re=".*"/>
+        </entity>
+    </entities>
+</fts-config>

@@ -1,25 +1,27 @@
 package com.company.testtask.web.contract;
 
-import com.company.testtask.AmountCalculator;
 import com.company.testtask.configuration.ContractConfig;
 import com.company.testtask.entity.*;
+import com.haulmont.bpm.entity.ProcActor;
+import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.gui.procactions.ProcActionsFrame;
-import com.haulmont.cuba.core.global.Configuration;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.TimeSource;
+import com.haulmont.cuba.core.app.EmailService;
+import com.haulmont.cuba.core.entity.FileDescriptor;
+import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.gui.upload.FileUploadingAPI;
+import com.haulmont.cuba.security.entity.User;
 import com.haulmont.reports.gui.actions.TablePrintFormAction;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.math.BigDecimal;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class ContractEdit extends AbstractEditor<Contract> {
 
@@ -36,6 +38,10 @@ public class ContractEdit extends AbstractEditor<Contract> {
 
     @Named("leftFieldGroup.customer")
     protected LookupPickerField customerField;
+
+    @Named("leftFieldGroup.status")
+    protected PickerField statusField;
+
     @Inject
     protected Metadata metadata;
 
@@ -53,6 +59,9 @@ public class ContractEdit extends AbstractEditor<Contract> {
 
     @Inject
     protected TimeSource timeSource;
+
+    @Inject
+    protected EmailService emailService;
 
     @Inject
     protected Button buttonInvoice;
@@ -85,15 +94,27 @@ public class ContractEdit extends AbstractEditor<Contract> {
     protected Configuration configuration;
 
     @Inject
-    protected AmountCalculator amountCalculator;
+    protected FileMultiUploadField fileMultiUpload;
+
+    @Inject
+    protected DataSupplier dataSupplier;
+
+    @Inject
+    protected FileUploadingAPI fileUploadingAPI;
+
+    @Inject
+    protected CollectionDatasource<FileDescriptor, UUID> fileDs;
 
     @Override
     protected void initNewItem(Contract item) {
         super.initNewItem(item);
 
-        setVatFromConfig(item);
+        Status status = dataManager.load(Status.class)
+                .query("select c from testtask$Status c where c.code = :code")
+                .parameter("code", 1)
+                .one();
 
-        item.setStatus("New");
+        item.setStatus(status);
     }
 
     @Override
@@ -182,6 +203,31 @@ public class ContractEdit extends AbstractEditor<Contract> {
         });
 
         stageTable.addAction(createCertificate);
+
+        fileMultiUpload.addQueueUploadCompleteListener(() -> {
+            List<FileDescriptor> files = new ArrayList<>();
+            for (Map.Entry<UUID, String> entry : fileMultiUpload.getUploadsMap().entrySet()) {
+                UUID fileId = entry.getKey();
+                String fileName = entry.getValue();
+                FileDescriptor fd = fileUploadingAPI.getFileDescriptor(fileId, fileName);
+                files.add(fd);
+                // save file to FileStorage
+                try {
+                    fileUploadingAPI.putFileIntoStorage(fileId, fd);
+                } catch (FileStorageException e) {
+                    throw new RuntimeException("Error saving file to FileStorage", e);
+                }
+                // save file descriptor to database
+                dataSupplier.commit(fd);
+            }
+            getItem().setFiles(files);
+            showNotification("Uploaded files: " + fileMultiUpload.getUploadsMap().values(), NotificationType.HUMANIZED);
+            fileMultiUpload.clearUploads();
+            fileDs.refresh();
+        });
+
+        fileMultiUpload.addFileUploadErrorListener(event ->
+                showNotification("File upload error", NotificationType.HUMANIZED));
     }
 
     @Override
@@ -202,34 +248,25 @@ public class ContractEdit extends AbstractEditor<Contract> {
 
         customerField.addValueChangeListener(organizationChangeListener);
 
-        amountField.addValueChangeListener(e -> {
-            BigDecimal amount = (BigDecimal) e.getValue();
+        ValueChangeListener totalAmountChangeListener = e -> {
+            Contract contract = getItem();
+            BigDecimal amount = contract.getAmount();
 
             if (amount != null) {
-
-                Contract contract = getItem();
                 BigDecimal vat = contract.getVat();
+                if (vat == null || !isEscapingVat(contract)) {
+                    setVatFromConfig(contract);
+                    vat = contract.getVat();
+                }
 
-                BigDecimal totalAmount = amountCalculator.calculateTotalAmount(amount, vat);
+                BigDecimal totalAmount = amount.add(vat);
                 contract.setTotalAmount(totalAmount);
             }
-        });
+        };
 
-        vatField.addValueChangeListener(e -> {
-            BigDecimal vat = (BigDecimal) e.getValue();
+        amountField.addValueChangeListener(totalAmountChangeListener);
 
-            if (vat != null) {
-
-                Contract contract = getItem();
-                BigDecimal amount = contract.getAmount();
-
-                if (amount != null) {
-
-                    BigDecimal totalAmount = amountCalculator.calculateTotalAmount(amount, vat);
-                    contract.setTotalAmount(totalAmount);
-                }
-            }
-        });
+        vatField.addValueChangeListener(totalAmountChangeListener);
     }
 
     protected boolean isEscapingVat(Contract contract) {
@@ -241,7 +278,11 @@ public class ContractEdit extends AbstractEditor<Contract> {
 
     protected void setVatFromConfig(Contract item) {
         BigDecimal vat = configuration.getConfig(ContractConfig.class).getVat();
-        item.setVat(vat);
+        BigDecimal amount = item.getAmount();
+
+        if (vat != null && amount != null) {
+            item.setVat(amount.multiply(new BigDecimal(vat.doubleValue() / 100)));
+        }
     }
 
     @Override

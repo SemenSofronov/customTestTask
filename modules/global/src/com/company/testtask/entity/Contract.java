@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import com.haulmont.cuba.core.entity.FileDescriptor;
 
 @Listeners("testtask_ContractEntityListener")
 @NamePattern("%s|number")
@@ -72,8 +73,35 @@ public class Contract extends StandardEntity {
     @OneToMany(mappedBy = "contract")
     protected List<Stage> stages;
 
-    @Column(name = "STATUS")
-    protected String status;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "STATUS_ID")
+    protected Status status;
+
+
+
+    @JoinTable(name = "TESTTASK_CONTRACT_FILE_DESCRIPTOR_LINK",
+        joinColumns = @JoinColumn(name = "CONTRACT_ID"),
+        inverseJoinColumns = @JoinColumn(name = "FILE_DESCRIPTOR_ID"))
+    @ManyToMany
+    protected List<FileDescriptor> files;
+
+    public void setFiles(List<FileDescriptor> files) {
+        this.files = files;
+    }
+
+    public List<FileDescriptor> getFiles() {
+        return files;
+    }
+
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
 
     public BigDecimal getVat() {
         return vat;
@@ -81,14 +109,6 @@ public class Contract extends StandardEntity {
 
     public void setVat(BigDecimal vat) {
         this.vat = vat;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getStatus() {
-        return status;
     }
 
     public void setStages(List<Stage> stages) {

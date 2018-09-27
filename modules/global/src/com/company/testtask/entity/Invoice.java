@@ -12,6 +12,10 @@ import com.haulmont.chile.core.annotations.NamePattern;
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 import javax.persistence.JoinColumn;
+import com.haulmont.cuba.core.entity.FileDescriptor;
+import java.util.List;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 @NamePattern("%s|description")
 @Table(name = "TESTTASK_INVOICE")
@@ -41,6 +45,22 @@ public class Invoice extends StandardEntity {
     @JoinColumn(name = "STAGE_ID")
     @OneToOne(fetch = FetchType.LAZY)
     protected Stage stage;
+
+    @JoinTable(name = "TESTTASK_INVOICE_FILE_DESCRIPTOR_LINK",
+        joinColumns = @JoinColumn(name = "INVOICE_ID"),
+        inverseJoinColumns = @JoinColumn(name = "FILE_DESCRIPTOR_ID"))
+    @ManyToMany
+    protected List<FileDescriptor> file;
+
+    public List<FileDescriptor> getFile() {
+        return file;
+    }
+
+    public void setFile(List<FileDescriptor> file) {
+        this.file = file;
+    }
+
+
 
     public String getNumber() {
         return number;

@@ -8,29 +8,64 @@
     <dsContext>
         <datasource id="invoiceDs"
                     class="com.company.testtask.entity.Invoice"
-                    view="invoice-view"/>
+                    view="invoice-view">
+            <collectionDatasource id="fileDs"
+                                  property="file"/>
+        </datasource>
     </dsContext>
     <dialogMode height="600"
                 width="800"/>
-    <layout expand="windowActions"
-            spacing="true">
-        <fieldGroup id="fieldGroup"
-                    datasource="invoiceDs">
-            <column width="250px">
-                <field editable="false"
-                       property="number"/>
-                <field editable="false"
-                       property="date"/>
-                <field editable="false"
-                       property="amount"/>
-                <field editable="false"
-                       property="vat"/>
-                <field editable="false"
-                       property="totalAmount"/>
-                <field property="description"/>
-            </column>
-        </fieldGroup>
-        <frame id="windowActions"
-               screen="editWindowActions"/>
+    <layout spacing="true">
+        <grid spacing="true">
+            <columns count="2"/>
+            <rows>
+                <row>
+                    <fieldGroup id="fieldGroup"
+                                datasource="invoiceDs">
+                        <column width="250px">
+                            <field editable="false"
+                                   property="number"/>
+                            <field editable="false"
+                                   property="date"/>
+                            <field editable="false"
+                                   property="amount"/>
+                            <field editable="false"
+                                   property="vat"/>
+                            <field editable="false"
+                                   property="totalAmount"/>
+                            <field property="description"/>
+                        </column>
+                    </fieldGroup>
+                    <groupBox caption="Attachments"
+                              spacing="true"
+                              width="AUTO">
+                        <table id="fileTable"
+                               height="200px"
+                               width="400px">
+                            <actions>
+                                <action id="add"/>
+                                <action id="exclude"/>
+                            </actions>
+                            <columns>
+                                <column id="name"/>
+                                <column id="extension"/>
+                                <column id="size"/>
+                                <column id="createDate"/>
+                            </columns>
+                            <rows datasource="fileDs"/>
+                            <buttonsPanel>
+                                <multiUpload id="fileMultiUpload"
+                                             datasource="fileDs"/>
+                            </buttonsPanel>
+                        </table>
+                    </groupBox>
+                </row>
+                <row>
+                    <frame id="windowActions"
+                           height="100%"
+                           screen="editWindowActions"/>
+                </row>
+            </rows>
+        </grid>
     </layout>
 </window>

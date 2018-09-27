@@ -1,0 +1,2 @@
+alter table TESTTASK_INVOICE add constraint FK_TESTTASK_INVOICE_ON_FILE foreign key (FILE_ID) references SYS_FILE(ID);
+create index IDX_TESTTASK_INVOICE_ON_FILE on TESTTASK_INVOICE (FILE_ID);

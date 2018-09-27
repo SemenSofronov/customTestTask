@@ -20,4 +20,8 @@
             template="com/company/testtask/web/invoice/invoice-edit.xml"/>
     <screen id="testtask$ServiceCompletionCertificate.edit"
             template="com/company/testtask/web/servicecompletioncertificate/service-completion-certificate-edit.xml"/>
+    <screen id="testtask$Status.browse"
+            template="com/company/testtask/web/status/status-browse.xml"/>
+    <screen id="testtask$Status.edit"
+            template="com/company/testtask/web/status/status-edit.xml"/>
 </screen-config>

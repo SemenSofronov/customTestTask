@@ -8,5 +8,6 @@
         <class>com.company.testtask.entity.Stage</class>
         <class>com.company.testtask.entity.ServiceCompletionCertificate</class>
         <class>com.company.testtask.entity.Invoice</class>
+        <class>com.company.testtask.entity.Status</class>
     </persistence-unit>
 </persistence>

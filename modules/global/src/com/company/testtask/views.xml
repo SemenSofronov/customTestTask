@@ -24,6 +24,12 @@
             <property name="contract"
                       view="_minimal"/>
         </property>
+        <property name="status"
+                  view="_minimal"/>
+        <property name="files"
+                  view="_minimal">
+            <property name="size"/>
+        </property>
     </view>
     <view class="com.company.testtask.entity.Contract"
           extends="_local"
@@ -31,6 +37,8 @@
         <property name="customer"
                   view="_minimal"/>
         <property name="performer"
+                  view="_minimal"/>
+        <property name="status"
                   view="_minimal"/>
     </view>
     <view class="com.company.testtask.entity.Stage"
@@ -67,6 +75,10 @@
                 </property>
             </property>
         </property>
+        <property name="file"
+                  view="_minimal">
+            <property name="size"/>
+        </property>
     </view>
     <view class="com.company.testtask.entity.ServiceCompletionCertificate"
           extends="_local"
@@ -84,6 +96,10 @@
                 <property name="customerSigner"/>
                 <property name="performerSigner"/>
             </property>
+        </property>
+        <property name="file"
+                  view="_minimal">
+            <property name="size"/>
         </property>
     </view>
 </views>

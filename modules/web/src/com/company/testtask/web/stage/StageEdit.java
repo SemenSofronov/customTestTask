@@ -1,8 +1,9 @@
 package com.company.testtask.web.stage;
 
-import com.company.testtask.AmountCalculator;
+import com.company.testtask.configuration.ContractConfig;
 import com.company.testtask.entity.Contract;
 import com.company.testtask.entity.Stage;
+import com.haulmont.cuba.core.global.Configuration;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.cuba.gui.components.TextField;
 
@@ -15,52 +16,40 @@ public class StageEdit extends AbstractEditor<Stage> {
     @Named("fieldGroup.amount")
     protected TextField amountField;
 
-    @Named("fieldGroup.vat")
-    protected TextField vatField;
-
     @Inject
-    protected AmountCalculator amountCalculator;
-
-    @Override
-    protected void initNewItem(Stage item) {
-        super.initNewItem(item);
-
-        Contract contract = item.getContract();
-
-        item.setVat(contract.getVat());
-    }
+    protected Configuration configuration;
 
     @Override
     protected void postInit() {
         super.postInit();
 
         amountField.addValueChangeListener(e -> {
-            BigDecimal amount = (BigDecimal) e.getValue();
+            Stage stage = getItem();
+            BigDecimal amount = stage.getAmount();
 
             if (amount != null) {
+                Contract contract = stage.getContract();
+                BigDecimal vat = contract.getVat();
+                if (vat == null || vat.intValue() != 0) {
+                    setVatFromConfig(stage);
+                    vat = stage.getVat();
+                } else {
+                    stage.setVat(vat);
+                }
 
-                Stage stage = getItem();
-                BigDecimal vat = stage.getVat();
-
-                BigDecimal totalAmount = amountCalculator.calculateTotalAmount(amount, vat);
+                BigDecimal totalAmount = amount.add(vat);
                 stage.setTotalAmount(totalAmount);
             }
         });
 
-        vatField.addValueChangeListener(e -> {
-            BigDecimal vat = (BigDecimal) e.getValue();
+    }
 
-            if (vat != null) {
+    protected void setVatFromConfig(Stage item) {
+        BigDecimal vat = configuration.getConfig(ContractConfig.class).getVat();
+        BigDecimal amount = item.getAmount();
 
-                Stage stage = getItem();
-                BigDecimal amount = stage.getAmount();
-
-                if (amount != null) {
-
-                    BigDecimal totalAmount = amountCalculator.calculateTotalAmount(amount, vat);
-                    stage.setTotalAmount(totalAmount);
-                }
-            }
-        });
+        if (vat != null && amount != null) {
+            item.setVat(amount.multiply(new BigDecimal(vat.doubleValue() / 100)));
+        }
     }
 }
