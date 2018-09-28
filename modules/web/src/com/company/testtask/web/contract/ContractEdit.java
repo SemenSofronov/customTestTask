@@ -281,7 +281,7 @@ public class ContractEdit extends AbstractEditor<Contract> {
         BigDecimal amount = item.getAmount();
 
         if (vat != null && amount != null) {
-            item.setVat(amount.multiply(new BigDecimal(vat.doubleValue() / 100)));
+            item.setVat(amount.multiply(vat.divide(new BigDecimal(100))));
         }
     }
 
